@@ -50,7 +50,6 @@ pub extern "C" fn dlopen(file: *const c_char, mode: c_int) -> *mut c_void {
             "call [rip + dlsym@GOTPCREL]",
             "mov rcx, [rip + ORIGDLOPEN@GOTPCREL]",
             "mov [rcx], rax",
-            "mov rcx, rax",
 
             // ORIGDLOPEN != 0 (hopefully)
             "1:",
