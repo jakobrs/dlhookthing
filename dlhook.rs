@@ -17,7 +17,7 @@ pub unsafe extern "C" fn dlopen(file: *const c_char, mode: c_int) -> *mut c_void
     #[no_mangle]
     static mut PHASE: u8 = 0;
     #[no_mangle]
-    static     DLOPENSTR: [u8; 7] = ['d' as u8, 'l' as u8, 'o' as u8, 'p' as u8, 'e' as u8, 'n' as u8, 0];
+    static     DLOPENSTR: [u8; 7] = *b"dlopen\0";
     #[no_mangle]
     static mut ORIGDLOPEN: *mut c_void = 0 as *mut c_void;
     #[no_mangle]
