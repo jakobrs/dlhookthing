@@ -65,7 +65,6 @@ pub extern "C" fn dlopen(file: *const c_char, mode: c_int) -> *mut c_void {
             "mov rdi, [rbp - 0x10]",
             "mov esi, [rbp - 0x14]",
 
-            //"int 3",
             "mov rax, [rip + OLDFILE@GOTPCREL]",
             "mov [rax], rdi",
             "mov rax, [rip + OLDMODE@GOTPCREL]",
@@ -80,7 +79,6 @@ pub extern "C" fn dlopen(file: *const c_char, mode: c_int) -> *mut c_void {
 
             // PHASE == 1
             "2:",
-            //"int 3",
             "mov rdx, [rip + OLDFILE@GOTPCREL]",
             "mov rdi, [rdx]",
             "mov rdx, [rip + OLDMODE@GOTPCREL]",
