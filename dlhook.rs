@@ -96,18 +96,30 @@ pub extern "C" fn dlopen(file: *const c_char, mode: c_int) -> *mut c_void {
     }
 }
 
+unsafe fn ptr2cstr<'a>(ptr: *const c_char) -> &'a CStr {
+    if ptr == 0 as *const c_char {
+        CStr::from_bytes_with_nul_unchecked(b"NULL\0")
+    } else {
+        CStr::from_ptr(ptr)
+    }
+}
+
 #[no_mangle]
 #[inline(never)]
 pub unsafe extern "C" fn prehook(file: *const c_char, mode: c_int) {
-    println!("Attempting to open {:?} with mode {}", CStr::from_ptr(file), mode);
+    let file = ptr2cstr(file);
+    
+    println!("Attempting to open {:?} with mode {}", file, mode);
 }
 
 #[no_mangle]
 #[inline(never)]
 pub unsafe extern "C" fn posthook(file: *const c_char, mode: c_int, rax: *mut c_void) {
+    let file = ptr2cstr(file);
+    
     if rax == 0 as *mut c_void {
-        println!("Failed to open {:?} with mode {}", CStr::from_ptr(file), mode);
+        println!("Failed to open {:?} with mode {}", file, mode);
     } else {
-        println!("Successfully opened {:?} with mode {}, returning {:?}", CStr::from_ptr(file), mode, rax);
+        println!("Successfully opened {:?} with mode {}, returning {:?}", file, mode, rax);
     }
 }
