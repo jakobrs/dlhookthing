@@ -35,8 +35,7 @@ pub extern "C" fn dlopen(file: *const c_char, mode: c_int) -> *mut c_void {
             "mov [rbp - 0x14], esi",
 
             "mov rax, [rip + PHASE@GOTPCREL]",
-            "mov rax, [rax]",
-            "cmp rax, 0",
+            "cmp byte ptr [rax], 0",
             "jne 2f",
 
             // PHASE == 0
