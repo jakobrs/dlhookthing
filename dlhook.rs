@@ -61,12 +61,19 @@ pub extern "C" fn dlopen(file: *const c_char, mode: c_int) -> *mut c_void {
 
             "mov rdi, [rbp - 0x10]",
             "mov esi, [rbp - 0x14]",
+            "call [rip + prehook@GOTPCREL]",
+
+            "mov rdi, [rbp - 0x10]",
+            "mov esi, [rbp - 0x14]",
 
             //"int 3",
             "mov rax, [rip + OLDFILE@GOTPCREL]",
             "mov [rax], rdi",
             "mov rax, [rip + OLDMODE@GOTPCREL]",
             "mov [rax], esi",
+
+            "mov rcx, [rip + ORIGDLOPEN@GOTPCREL]",
+            "mov rcx, [rcx]",
 
             "mov rsp, rbp",
             "pop rbp",
@@ -95,6 +102,16 @@ pub extern "C" fn dlopen(file: *const c_char, mode: c_int) -> *mut c_void {
 
 #[no_mangle]
 #[inline(never)]
+pub unsafe extern "C" fn prehook(file: *const c_char, mode: c_int) {
+    println!("Attempting to open {:?} with mode {}", CStr::from_ptr(file), mode);
+}
+
+#[no_mangle]
+#[inline(never)]
 pub unsafe extern "C" fn posthook(file: *const c_char, mode: c_int, rax: *mut c_void) {
-    println!("Successfully opened {:?} with mode {}, returning {:?}", CStr::from_ptr(file), mode, rax);
+    if rax == 0 as *mut c_void {
+        println!("Failed to open {:?} with mode {}", CStr::from_ptr(file), mode);
+    } else {
+        println!("Successfully opened {:?} with mode {}, returning {:?}", CStr::from_ptr(file), mode, rax);
+    }
 }
